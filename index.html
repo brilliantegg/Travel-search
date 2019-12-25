@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    body{
+        width: 80%;
+        margin: auto;
+    }
+    .result_area{
+        padding: 10px;
+    }
+    .result_card{
+        margin-top: 10px;
+        padding: 5px;
+        border: 0px transparent;
+        border-radius: 5px;
+        background-color: darkgrey;
+    }
+    </style>
+</head>
+<body>
+    <h2>台灣觀光資料簡易查詢</h2>
+    <div>
+        <input id="keyword" type="text"/>
+        <button id="query" type="submit">送出</button>
+    </div>
+    <div id="total"></div>
+    <div id="result_area">
+        <div class="result_card" style="display: none;">
+            <h4>data[i].Name</h4>
+            <p><span>data[i].Region</span> data[i].Town data[i].Add</p>
+            <p>data[i].Tel</p>
+            <p>data[i].Toldescribe</p>
+            <p>data[i].Ticketinfo</p>
+            <p>data[i].Remarks</p>
+        </div>
+    </div>
+
+
+
+
+
+    <script src="/scripts/jquery-3.4.1.js"></script>
+    <script>
+        $('#query').click(function(){
+            $('#result_area').empty();
+            $('#total').empty();
+            $.ajax({
+                url:"json/scenic_spot_C_f.json",
+                type:"get",
+                dataType:"json",
+                success:function(data){
+                    //data=data_original.XML_Head.Infos.Info;
+                    j=0;
+                    test=$('#keyword').val();
+                    for(i=0;i<data.length;i++){
+                        if(data[i].Keyword.includes(test)){                        
+                            $('#result_area').append('<div class="result_card"><h4>'+data[i].Name+'</h4><p><span>'+data[i].Region+'</span> '+data[i].Town+' '+data[i].Add+'</p><p>'+data[i].Tel+'</p><p>'+data[i].Toldescribe+'</p><p>'+data[i].Ticketinfo+'</p><p>'+data[i].Remarks+'</p></div>');
+                            j++;
+                            console.log(test);
+                            console.log(data[i].Keyword.includes($('#keyword').val()));
+                        }
+                    }                  
+                    //var num=data.length;
+                    $('#total').append("<h3>有"+j+"筆搜尋結果</h3>");
+                },
+                error:function(){
+                    $('#result_area').html("error");
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
