@@ -1,42 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>台灣觀光資料簡易查詢</title>
     <style>
-    body{
-        width: 80%;
-        margin: auto;
-    }
-    .result_area{
-        padding: 10px;
-    }
-    .result_card{
-        margin-top: 10px;
-        padding: 5px;
-        border: 0px transparent;
-        border-radius: 5px;
-        background-color: darkgrey;
-    }
+        @font-face {
+            font-family: TaipeiSansTC;
+            src: url('fonts\TaipeiSansTCBeta-Regular.ttf') format('ttf');
+            font-weight: normal;
+        }
+
+        @font-face {
+            font-family: TaipeiSansTC;
+            src: url('fonts\TaipeiSansTCBeta-Bold.ttf') format('ttf');
+            font-weight: bold;
+        }
+
+
+        body {
+            width: 80%;
+            margin: auto;
+            background-color: beige;
+            font-family: TaipeiSansTC, sans-serif;
+        }
+
+        .result_area {
+            padding: 10px;
+        }
+
+        .result_card {
+            margin-top: 10px;
+            padding: 15px;
+            border: 0px transparent;
+            border-radius: 10px;
+            background-color: #433c4296;
+            color: beige;
+            font-size: 0.9rem;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        #keyword {
+            height: 1.8rem;
+            border: 1px solid teal;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+
+        .btn_sub {
+            padding: 8px;
+            border: 0px transparent;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+
+        .spot {
+            background-color: #1CC4B0;
+            color: white;
+        }
+
+        .spot:hover {
+            background-color: white;
+            color: #1CC4B0;
+        }
+
+        .vegan {
+            background-color: #5F9101;
+            color: white;
+        }
+
+        .vegan:hover {
+            background-color: white;
+            color: #5F9101;
+        }
+
+        .activity {
+            background-color: #33578e;
+            color: white;
+        }
+
+        .activity:hover {
+            background-color: white;
+            color: #49373F;
+        }
+
+        .hotel {
+            background-color: #E2532F;
+            color: white;
+        }
+
+        .hotel:hover {
+            background-color: white;
+            color: #E2532F;
+        }
+
+        .food {
+            background-color: teal;
+            color: white;
+        }
+
+        .food:hover {
+            background-color: white;
+            color: teal;
+        }
     </style>
 </head>
+
 <body>
     <h2>台灣觀光資料簡易查詢</h2>
     <div>
-        <input id="keyword" type="text"/>
-        <button id="query" type="submit">送出</button>
+        <input id="keyword" type="text" placeholder="請輸入關鍵字" />
+        <button id="query_spot" class="btn_sub spot" type="submit">找景點</button>
+        <button id="query_activity" class="btn_sub activity" type="submit">找活動</button>
+        <button id="query_hotel" class="btn_sub hotel" type="submit">找旅宿</button>
+        <button id="query_food" class="btn_sub food" type="submit">找餐廳</button>
+        <button id="query_vegan" class="btn_sub vegan" type="submit">找蔬食</button>
     </div>
-    <div id="total"></div>
+    <div id="total" style="color: #433c42;"></div>
     <div id="result_area">
         <div class="result_card" style="display: none;">
-            <h4>data[i].Name</h4>
-            <p><span>data[i].Region</span> data[i].Town data[i].Add</p>
-            <p>data[i].Tel</p>
-            <p>data[i].Toldescribe</p>
-            <p>data[i].Ticketinfo</p>
-            <p>data[i].Remarks</p>
+            <span class="title">data[i].客戶名稱</span>
+            <p>data[i].素食種類 data[i].消費價格</p>
+            <p>電話： data[i].電話</p>
+            <p>營業時間： data[i].營業時間</p>
+            <p><span>data[i].地址</span> <a href="https://www.google.com/maps/place/data[i].Add" target="_blank">google maps</a></p>
+            <p>交通資訊： data[i].交通</p>
+            <p>網址： <a href="data[i].網址" target="_blank">data[i].網址</a></p>                         
         </div>
     </div>
 
@@ -46,34 +141,127 @@
 
     <script src="/scripts/jquery-3.4.1.js"></script>
     <script>
-        $('#query').click(function(){
+        $('#query_spot').click(function () {
             $('#result_area').empty();
             $('#total').empty();
             $.ajax({
-                url:"json/scenic_spot_C_f.json",
-                type:"get",
-                dataType:"json",
-                success:function(data){
-                    //data=data_original.XML_Head.Infos.Info;
-                    j=0;
-                    test=$('#keyword').val();
-                    for(i=0;i<data.length;i++){
-                        if(data[i].Keyword.includes(test)){                        
-                            $('#result_area').append('<div class="result_card"><h4>'+data[i].Name+'</h4><p><span>'+data[i].Region+'</span> '+data[i].Town+' '+data[i].Add+'</p><p>'+data[i].Tel+'</p><p>'+data[i].Toldescribe+'</p><p>'+data[i].Ticketinfo+'</p><p>'+data[i].Remarks+'</p></div>');
+                url: "json/scenic_spot_C_f.json",
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+                    j = 0;
+                    test = $('#keyword').val();
+                    for (i = 0; i < data.length; i++) {
+                        if (data[i].Keyword != null && data[i].Keyword.includes(test)) {
+                            $('#result_area').append('<div class="result_card"><span class="title">' + data[i].Name + '</span><p>' + data[i].Add + ' <a href="https://www.google.com/maps/place/' + data[i].Add + '" target="_blank">google maps</a></p><p>電話：' + data[i].Tel + '</p><p>' + data[i].Toldescribe + '</p><p>門票資訊：' + data[i].Ticketinfo + '</p><p>注意事項：' + data[i].Remarks + '</p></div>');
                             j++;
-                            console.log(test);
-                            console.log(data[i].Keyword.includes($('#keyword').val()));
                         }
-                    }                  
-                    //var num=data.length;
-                    $('#total').append("<h3>有"+j+"筆搜尋結果</h3>");
+                        else if (data[i].Name.includes(test) || data[i].Toldescribe.includes(test)) {
+                            $('#result_area').append('<div class="result_card"><span class="title">' + data[i].Name + '</span><p>' + data[i].Add + ' <a href="https://www.google.com/maps/place/' + data[i].Add + '" target="_blank">google maps</a></p><p>電話：' + data[i].Tel + '</p><p>' + data[i].Toldescribe + '</p><p>門票資訊：' + data[i].Ticketinfo + '</p><p>注意事項：' + data[i].Remarks + '</p></div>');
+                            j++;
+                        }
+                    }
+                    $('#total').append("<h3>有" + j + "筆搜尋結果</h3>");
                 },
-                error:function(){
+                error: function () {
                     $('#result_area').html("error");
                 }
             });
         });
-
+        $('#query_activity').click(function () {
+            $('#result_area').empty();
+            $('#total').empty();
+            $.ajax({
+                url: "json/activity_C_f.json",
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+                    j = 0;
+                    test = $('#keyword').val();
+                    for (i = 0; i < data.length; i++) {
+                        if (data[i].Name.includes(test) || data[i].Description.includes(test)) {
+                            $('#result_area').append('<div class="result_card"><span class="title">'+data[i].Name+'</span><p><span>'+data[i].Region+data[i].Town+data[i].Add+'</span> <a href="https://www.google.com/maps/place/'+data[i].Region+data[i].Town+data[i].Add+'">google maps</a></p><p>主辦單位： '+data[i].Org+'</p><p>'+data[i].Description+'</p><p>活動時間： '+data[i].Start+' ~ '+data[i].End+'</p></div>');
+                            j++;
+                        }                    
+                    }
+                    $('#total').append("<h3>有" + j + "筆搜尋結果</h3>");
+                },
+                error: function () {
+                    $('#result_area').html("error");
+                }
+            });
+        });
+        $('#query_hotel').click(function () {
+            $('#result_area').empty();
+            $('#total').empty();
+            $.ajax({
+                url: "json/hotel_C_f.json",
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+                    j = 0;
+                    test = $('#keyword').val();
+                    for (i = 0; i < data.length; i++) {
+                        if (data[i].Name.includes(test) || data[i].Description.includes(test) || data[i].Add.includes(test)) {
+                            $('#result_area').append('<div class="result_card"><span class="title">'+data[i].Name+'</span><p><span>'+data[i].Add+'</span> <a href="https://www.google.com/maps/place/'+data[i].Add+'" target="_blank">google maps</a></p><p>電話： '+data[i].Tel+'</p><p>'+data[i].Description+'</p><p>服務資訊： '+data[i].Serviceinfo+'</p><p>停車資訊： '+data[i].Parkinginfo+'</p><p>電子郵件： '+data[i].IndustryEmail+'</p></div>');
+                            j++;
+                        }                    
+                    }
+                    $('#total').append("<h3>有" + j + "筆搜尋結果</h3>");
+                },
+                error: function () {
+                    $('#result_area').html("error");
+                }
+            });
+        });
+        $('#query_food').click(function () {
+            $('#result_area').empty();
+            $('#total').empty();
+            $.ajax({
+                url: "json/restaurant_C_f.json",
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+                    j = 0;
+                    test = $('#keyword').val();
+                    for (i = 0; i < data.length; i++) {
+                        if (data[i].Name.includes(test) || data[i].Description.includes(test) || data[i].Add.includes(test)) {
+                            $('#result_area').append('<div class="result_card"><span class="title">'+data[i].Name+'</span><p><span>'+data[i].Add+'</span> <a href="https://www.google.com/maps/place/'+data[i].Add+'" target="_blank">google maps</a></p><p>電話： '+data[i].Tel+'</p><p>營業時間： '+data[i].Opentime+'</p><p>'+data[i].Description+'</p></div>');
+                            j++;
+                        }                    
+                    }
+                    $('#total').append("<h3>有" + j + "筆搜尋結果</h3>");
+                },
+                error: function () {
+                    $('#result_area').html("error");
+                }
+            });
+        });
+        $('#query_vegan').click(function () {
+            $('#result_area').empty();
+            $('#total').empty();
+            $.ajax({
+                url: "json/vegan.json",
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+                    //data=JSON.parse(data);
+                    j = 0;
+                    test = $('#keyword').val();
+                    for (i = 0; i < data.length; i++) {
+                        if (data[i].客戶名稱.includes(test) || data[i].素食種類.includes(test) || data[i].地址.includes(test)) {
+                            $('#result_area').append('<div class="result_card"><span class="title">'+data[i].客戶名稱+'</span><p>'+data[i].素食種類+' | '+data[i].消費價格+'</p><p>電話： '+data[i].電話+'</p><p>營業時間： '+data[i].營業時間+'</p><p><span>'+data[i].地址+'</span> <a href="https://www.google.com/maps/place/'+data[i].Add+'" target="_blank">google maps</a></p><p>交通資訊： '+data[i].交通+'</p><p>網址： <a href="'+data[i].網址+'" target="_blank">'+data[i].網址+'</a></p></div>');
+                            j++;
+                        }                    
+                    }
+                    $('#total').append("<h3>有" + j + "筆搜尋結果</h3>");
+                },
+                error: function () {
+                    $('#result_area').html("error");
+                }
+            });
+        });
     </script>
 </body>
+
 </html>
